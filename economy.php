@@ -11,7 +11,7 @@ if (!$con) {
 
 // Economy Funktionen
 function getUserBalance($con, $userId) {
-    $sql = "SELECT * FROM balances WHERE PrincipalID = '" . mysqli_real_escape_string($con, $userId) . "'";
+    $sql = "SELECT * FROM balances WHERE user = '" . mysqli_real_escape_string($con, $userId) . "'";
     $result = mysqli_query($con, $sql);
     return $result ? mysqli_fetch_assoc($result) : null;
 }
@@ -21,10 +21,10 @@ function getUserTransactions($con, $userId, $limit = 50, $offset = 0) {
                    ua_from.FirstName as FromFirstName, ua_from.LastName as FromLastName,
                    ua_to.FirstName as ToFirstName, ua_to.LastName as ToLastName
             FROM transactions t 
-            LEFT JOIN UserAccounts ua_from ON t.fromID = ua_from.PrincipalID 
-            LEFT JOIN UserAccounts ua_to ON t.toID = ua_to.PrincipalID 
-            WHERE (t.fromID = '" . mysqli_real_escape_string($con, $userId) . "' 
-                   OR t.toID = '" . mysqli_real_escape_string($con, $userId) . "')
+            LEFT JOIN UserAccounts ua_from ON t.sender = ua_from.PrincipalID 
+            LEFT JOIN UserAccounts ua_to ON t.receiver = ua_to.PrincipalID 
+            WHERE (t.sender = '" . mysqli_real_escape_string($con, $userId) . "' 
+                   OR t.receiver = '" . mysqli_real_escape_string($con, $userId) . "')
             ORDER BY t.time DESC 
             LIMIT " . intval($limit) . " OFFSET " . intval($offset);
     
